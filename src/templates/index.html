@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BalanceBuddy: Diet and Workout Planner</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to BalanceBuddy</h1>
+            <p>Your personal guide to balancing diet and workouts</p>
+        </header>
+        <main>
+            <div class="introduction">
+                <h2>Why BalanceBuddy?</h2>
+                <p>BalanceBuddy is designed to help you create a personalized diet and workout plan that suits your lifestyle. By understanding your unique needs, we provide tailored recommendations that empower you to achieve your health and fitness goals.</p>
+            </div>
+            <div class="form-container">
+                <h2>Get Your Personalized Plan</h2>
+                <form id="dayForm" action="/" method="get"> <!-- Action will be set by JavaScript -->
+                    <div class="input-group">
+                        <label for="day">Choose a Day:</label>
+                        <select name="day" id="day">
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday (Cheat Day)</option>
+                        </select>
+                    </div>
+                    <button type="submit">Get Recommendation</button>
+                </form>
+                <script>
+                    document.getElementById('dayForm').onsubmit = function() {
+                        var day = document.getElementById('day').value;
+                        this.action = '/' + day;  // Set the action to include the selected day
+                    };
+                </script>
+            </div>
+            
+            
+        </main>
+        <footer>
+            <p>&copy; 2024 BalanceBuddy. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+/* General Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+header {
+    background: #2575fc;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+header p {
+    font-weight: lighter;
+    color: #dcdcdc;
+}
+
+main {
+    padding: 20px;
+}
+
+.introduction h2 {
+    color: #2e2e2e;
+    font-size: 18px;
+}
+
+.introduction p {
+    font-size: 16px;
+    color: #666;
+    margin-top: 10px;
+}
+
+.form-container {
+    margin: 20px;
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.form-container h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background: #2575fc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #195bdb;
+    opacity: 0.9;
+}
+
+footer {
+    background: #2575fc;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 20px;
+    width: 100%;
+    position: relative; /* Adjusted for demonstration purposes */
+    margin-top: 20px; /* Ensure spacing when the main content is short */
+}
+
+footer p {
+    margin: 0;
+}
