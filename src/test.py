@@ -8,6 +8,9 @@ from langchain.chains import LLMChain
 
 llm_resto = OpenAI(temperature=0.6)
 
+
+
+
 def get_daily_plan(day):
     prompt_template_resto = PromptTemplate(
         input_variables=[
