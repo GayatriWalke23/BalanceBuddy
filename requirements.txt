@@ -1,0 +1,22 @@
+# Audio processing
+webrtcvad>=2.0.10
+sounddevice>=0.4.6
+pyaudio>=0.2.13
+python-dateutil==2.8.23
+
+# Speech recognition
+vosk==0.3.44
+
+# Natural language processing
+transformers>=4.30.2
+torch>=2.0.1
+parsedatetime>=2.6
+
+# Backend & database
+fastapi>=0.100.0
+uvicorn>=0.22.0
+sqlalchemy>=2.0.19
+
+# Scheduling & notifications
+apscheduler>=3.10.1
+plyer>=2.1.0
