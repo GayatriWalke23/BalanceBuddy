@@ -1,45 +1,48 @@
 import os
 import re
-os.environ['OPENAI_API_KEY'] = 'sk-proj-m7DsICl5VTRESDnng3sDT3BlbkFJ3CM7HsreTRZURjQXwyRz' # apenai
-
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 from langchain.chains import LLMChain
+
+if 'OPENAI_API_KEY' not in os.environ:
+    raise ValueError("Please set the OPENAI_API_KEY environment variable")
 
 llm_resto = OpenAI(temperature=0.6)
 
 def get_daily_plan(day):
     prompt_template_resto = PromptTemplate(
         input_variables=[
-            'age', 'gender', 'weight', 'height', 'veg_or_nonveg', 
+            'day', 'age', 'gender', 'weight', 'height', 'veg_or_nonveg', 
             'disease', 'region', 'allergics', 'foodtype', 'exercise_pref', 'diet_pref'
         ],
-        template=f"""Please generate a detailed one-day plan for {{day}}. The plan should include meals and workouts formatted as follows:
-        - Morning Meal: [3 bullet points]
-        - Lunch: [3 bullet points]
-        - Afternoon Snack: [3 bullet points]
-        - Dinner: [3 bullet points]
-        - Workout: [3 bullet points]
-        Keep it short and do not add anything extra other than these points also limit each to 3 bullet points.
-        
-        Consider the following details for the plan:
-        - Age: {{age}}
-        - Gender: {{gender}}
-        - Weight: {{weight}}
-        - Height: {{height}}
-        - Dietary Preference: {{veg_or_nonveg}}
-        - Health Condition: {{disease}}
-        - Region: {{region}}
-        - Allergies: {{allergics}}
-        - Preferred Food Types: {{foodtype}}
-        - Exercise Preference: {{exercise_pref}}
-        - Diet Preference: {{diet_pref}}
-        """
+        template="""Generate a detailed one-day plan for {day}:
+- Morning Meal:
+  • [3 items]
+- Lunch:
+  • [3 items]
+- Afternoon Snack:
+  • [3 items]
+- Dinner:
+  • [3 items]
+- Workout:
+  • [3 items]
+
+User Profile:
+- Age: {age}
+- Gender: {gender}
+- Weight: {weight}
+- Height: {height}
+- Dietary Preference: {veg_or_nonveg}
+- Health Condition: {disease}
+- Region: {region}
+- Allergies: {allergics}
+- Preferred Food Types: {foodtype}
+- Exercise Preference: {exercise_pref}
+- Diet Preference: {diet_pref}"""
     )
 
     chain_resto = LLMChain(llm=llm_resto, prompt=prompt_template_resto)
-
-    # Define the input dictionary with additional user preferences
+    
     input_data = {
         'day': day,
         'age': 30,
@@ -55,8 +58,7 @@ def get_daily_plan(day):
         'diet_pref': 'Low Sodium'
     }
 
-    results = chain_resto.run(input_data)
-    return results
+    return chain_resto.run(input_data)
 
 days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday (Cheat Day)"]
 

@@ -11,10 +11,11 @@ class WakeWordDetector:
     def __init__(
         self,
         sample_rate: int = 16000,
-        frame_duration: int = 10,  # ms (reduced further for better responsiveness)
-        vad_mode: int = 0,  # 0-3, 0 is most sensitive
-        silence_threshold: float = 0.15,  # seconds (reduced further)
-        min_speech_duration: float = 0.02,  # seconds (reduced for quicker detection)
+        frame_duration: int = 30,  # ms (balanced for stability)
+        vad_mode: int = 3,  # 0-3, 3 is most aggressive
+        silence_threshold: float = 0.3,  # seconds (reduced for faster response)
+        min_speech_duration: float = 0.1,  # seconds (reduced for better detection)
+        gain_factor: float = 2.0,  # amplify quiet sounds
     ):
         self.sample_rate = sample_rate
         self.frame_duration = frame_duration
@@ -22,6 +23,7 @@ class WakeWordDetector:
         self.vad = webrtcvad.Vad(vad_mode)
         self.silence_threshold = silence_threshold
         self.min_speech_duration = min_speech_duration
+        self.gain_factor = gain_factor
         self.audio_queue = queue.Queue()
         self.is_listening = False
         self._stop_event = threading.Event()
@@ -42,13 +44,30 @@ class WakeWordDetector:
                 return
             
             # Convert float32 to int16 for VAD
-            audio_data = (indata.flatten() * 32767).astype(np.int16)
+            # Process audio data
+            audio_data = indata.flatten()
+            
+            # Calculate RMS and apply gain if needed
+            rms = np.sqrt(np.mean(audio_data**2))
+            if self.debug:
+                print(f"\rAudio level: {rms:.4f}", end="")
+            
+            # Apply gain if sound is quiet
+            if rms < 0.1:
+                audio_data = audio_data * self.gain_factor
+            
+            # Normalize to [-1, 1]
+            if np.max(np.abs(audio_data)) > 0:
+                audio_data = audio_data / np.max(np.abs(audio_data))
+            
+            # Convert to 16-bit integer
+            audio_data = (audio_data * 32767).astype(np.int16)
             
             # Debug audio level occasionally
             if len(audio_data) > 0:
-                audio_level = np.abs(audio_data).mean()
-                if audio_level > 100:  # Much lower threshold
-                    print(f"🎤 Sound detected ({audio_level:.0f})")
+                rms = np.sqrt(np.mean(audio_data.astype(np.float32)**2))
+                if rms > 2000:
+                    print(f"🎤 Sound level: {rms:.0f} RMS")
             
             self.audio_queue.put(audio_data)
 

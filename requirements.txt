@@ -1,13 +1,13 @@
 # Audio processing
+vosk>=0.3.44
 webrtcvad>=2.0.10
 sounddevice>=0.4.6
 pyaudio>=0.2.13
-python-dateutil==2.8.23
+numpy>=1.24.3
+scipy>=1.10.1
+python-dateutil>=2.8.2
 
-# Speech recognition
-vosk==0.3.44
-
-# Natural language processing
+# ML & NLP
 transformers>=4.30.2
 torch>=2.0.1
 parsedatetime>=2.6

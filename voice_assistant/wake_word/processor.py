@@ -1,7 +1,8 @@
 """Wake word processor that coordinates detection and activation."""
+import threading
+import time
 import numpy as np
 from typing import Callable, Optional, List
-import threading
 from voice_assistant.wake_word.detector import WakeWordDetector
 from voice_assistant.wake_word.recognizer import WakeWordRecognizer
 
@@ -26,8 +27,12 @@ class WakeWordProcessor:
             "hey buddy",
             "hey balance buddy",
             "okay buddy",
-            "hi buddy",  # Added more variations
-            "hello buddy"
+            "hi buddy",
+            "hello buddy",
+            "yo buddy",
+            "hey there buddy",
+            "hey pal",
+            "hey friend"
         ]
         
         self.recognizer = WakeWordRecognizer(
@@ -39,10 +44,11 @@ class WakeWordProcessor:
         self.detection_thread = None
         self.is_active = False
         self.last_detection_time = 0
-        self.detection_cooldown = 3.0  # seconds between detections
+        self.detection_cooldown = 1.0  # reduced cooldown between detections
+        self.consecutive_detections = 0
+        self.max_consecutive_detections = 2  # reduced number of detections needed
 
     def start(self):
-        """Start listening for wake word."""
         if self.is_active:
             print("Wake word processor is already active")
             return
@@ -55,7 +61,6 @@ class WakeWordProcessor:
         self.detection_thread.start()
 
     def stop(self):
-        """Stop listening for wake word."""
         if not self.is_active:
             return
 
@@ -67,23 +72,27 @@ class WakeWordProcessor:
 
     def _run_detection(self):
         """Run the wake word detection loop."""
-        import time
-        
         def on_voice_detected(audio_data: np.ndarray):
             current_time = time.time()
             
-            # Check cooldown period
             if current_time - self.last_detection_time < self.detection_cooldown:
                 return
-                
-            # Process audio with wake word recognizer
+            
             if self.recognizer.accept_waveform(audio_data):
-                print("\n Wake word detected! Listening for command...")
+                if current_time - self.last_detection_time > self.detection_cooldown * 2:
+                    self.consecutive_detections = 0
+                
+                self.consecutive_detections += 1
+                print(f"\n🎯 Wake word detection {self.consecutive_detections}/{self.max_consecutive_detections}")
+                
+                if self.consecutive_detections >= self.max_consecutive_detections:
+                    print("\n🎙️ Wake word confirmed! Listening for command...")
+                    if self.callback:
+                        self.callback()
+                    self.consecutive_detections = 0
+                
                 self.last_detection_time = current_time
-                if self.callback:
-                    self.callback(audio_data)
-                    
-            # Reset recognizer state
+                
             self.recognizer.reset()
 
         self.detector.start_listening(callback=on_voice_detected)
