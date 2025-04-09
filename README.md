@@ -3,7 +3,6 @@
 A smart voice-controlled assistant that helps you maintain a healthy lifestyle by generating personalized daily plans, setting reminders, and tracking your progress.
 
 ## Features
-
 - 🗣️ **Voice Activation**: Wake up the assistant with phrases like "hey buddy", "hey balance buddy", or "okay buddy"
 - 📅 **Daily Plans**: Get personalized meal and workout plans based on your preferences
 - 🔔 **Smart Notifications**: Receive timely reminders for meals and workouts
