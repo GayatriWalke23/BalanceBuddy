@@ -1,142 +1,105 @@
-"""Database module for storing tasks and reminders."""
-import sqlite3
+"""Database module for BalanceBuddy using SQLAlchemy."""
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
 from typing import List, Optional, Dict
 
+from .models import Base, User, DailyPlan, Reminder
+
 class Database:
-    def __init__(self, db_path: str = "tasks.db"):
+    def __init__(self, db_url: str = "sqlite:///balancebuddy.db"):
         """Initialize database connection."""
-        self.db_path = db_path
+        self.engine = create_engine(db_url)
+        self.SessionLocal = sessionmaker(bind=self.engine)
         self._init_db()
 
     def _init_db(self):
-        """Create tables if they don't exist."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            
-            # Create tasks table
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS tasks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    completed_at TIMESTAMP,
-                    is_completed BOOLEAN DEFAULT 0
+        """Create all tables."""
+        Base.metadata.create_all(self.engine)
+
+    def get_session(self) -> Session:
+        """Get a database session."""
+        return self.SessionLocal()
+
+    def create_user(self, username: str, preferences: Dict = None) -> Optional[User]:
+        """Create a new user."""
+        with self.get_session() as session:
+            try:
+                user = User(username=username, preferences=preferences or {})
+                session.add(user)
+                session.commit()
+                return user
+            except SQLAlchemyError:
+                session.rollback()
+                return None
+
+    def get_user(self, user_id: int) -> Optional[User]:
+        """Get user by ID."""
+        with self.get_session() as session:
+            return session.query(User).filter(User.id == user_id).first()
+
+    def create_daily_plan(self, user_id: int, date: datetime, meals: Dict, workout: List[str]) -> Optional[DailyPlan]:
+        """Create a new daily plan."""
+        with self.get_session() as session:
+            try:
+                plan = DailyPlan(
+                    user_id=user_id,
+                    date=date,
+                    meals=meals,
+                    workout=workout
                 )
-            """)
-            
-            # Create reminders table
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS reminders (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    task_id INTEGER,
-                    reminder_time TIMESTAMP NOT NULL,
-                    is_triggered BOOLEAN DEFAULT 0,
-                    FOREIGN KEY (task_id) REFERENCES tasks (id)
+                session.add(plan)
+                session.commit()
+                return plan
+            except SQLAlchemyError:
+                session.rollback()
+                return None
+
+    def get_daily_plan(self, user_id: int, date: datetime) -> Optional[DailyPlan]:
+        """Get daily plan for a specific date."""
+        with self.get_session() as session:
+            return session.query(DailyPlan).filter(
+                DailyPlan.user_id == user_id,
+                DailyPlan.date == date
+            ).first()
+
+    def create_reminder(self, user_id: int, time: datetime, message: str, type: str) -> Optional[Reminder]:
+        """Create a new reminder."""
+        with self.get_session() as session:
+            try:
+                reminder = Reminder(
+                    user_id=user_id,
+                    time=time,
+                    message=message,
+                    type=type
                 )
-            """)
-            
-            conn.commit()
+                session.add(reminder)
+                session.commit()
+                return reminder
+            except SQLAlchemyError:
+                session.rollback()
+                return None
 
-    def add_task(self, title: str, reminder_time: Optional[datetime] = None) -> int:
-        """Add a new task and optional reminder."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            
-            # Add task
-            cursor.execute(
-                "INSERT INTO tasks (title) VALUES (?)",
-                (title,)
-            )
-            task_id = cursor.lastrowid
-            
-            # Add reminder if specified
-            if reminder_time:
-                cursor.execute(
-                    "INSERT INTO reminders (task_id, reminder_time) VALUES (?, ?)",
-                    (task_id, reminder_time)
-                )
-            
-            conn.commit()
-            return task_id
+    def get_due_reminders(self, user_id: int) -> List[Reminder]:
+        """Get all uncompleted reminders that are due."""
+        with self.get_session() as session:
+            return session.query(Reminder).filter(
+                Reminder.user_id == user_id,
+                Reminder.time <= datetime.utcnow(),
+                Reminder.completed == False
+            ).all()
 
-    def get_tasks(self, include_completed: bool = False) -> List[Dict]:
-        """Get all tasks."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            
-            query = """
-                SELECT t.id, t.title, t.created_at, t.completed_at, 
-                       t.is_completed, r.reminder_time
-                FROM tasks t
-                LEFT JOIN reminders r ON t.id = r.task_id
-            """
-            
-            if not include_completed:
-                query += " WHERE t.is_completed = 0"
-                
-            cursor.execute(query)
-            rows = cursor.fetchall()
-            
-            tasks = []
-            for row in rows:
-                tasks.append({
-                    'id': row[0],
-                    'title': row[1],
-                    'created_at': row[2],
-                    'completed_at': row[3],
-                    'is_completed': bool(row[4]),
-                    'reminder_time': row[5]
-                })
-            
-            return tasks
-
-    def complete_task(self, task_id: int) -> bool:
-        """Mark a task as completed."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                UPDATE tasks 
-                SET is_completed = 1, completed_at = CURRENT_TIMESTAMP
-                WHERE id = ?
-                """,
-                (task_id,)
-            )
-            conn.commit()
-            return cursor.rowcount > 0
-
-    def get_due_reminders(self) -> List[Dict]:
-        """Get all reminders that are due but not triggered."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                """
-                SELECT r.id, t.title, r.reminder_time
-                FROM reminders r
-                JOIN tasks t ON r.task_id = t.id
-                WHERE r.is_triggered = 0 
-                AND r.reminder_time <= CURRENT_TIMESTAMP
-                AND t.is_completed = 0
-                """
-            )
-            
-            reminders = []
-            for row in cursor.fetchall():
-                reminders.append({
-                    'id': row[0],
-                    'title': row[1],
-                    'reminder_time': row[2]
-                })
-            
-            return reminders
-
-    def mark_reminder_triggered(self, reminder_id: int):
-        """Mark a reminder as triggered."""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE reminders SET is_triggered = 1 WHERE id = ?",
-                (reminder_id,)
-            )
-            conn.commit()
+    def mark_reminder_completed(self, reminder_id: int) -> bool:
+        """Mark a reminder as completed."""
+        with self.get_session() as session:
+            try:
+                reminder = session.query(Reminder).filter(Reminder.id == reminder_id).first()
+                if reminder:
+                    reminder.completed = True
+                    session.commit()
+                    return True
+                return False
+            except SQLAlchemyError:
+                session.rollback()
+                return False
