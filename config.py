@@ -16,6 +16,10 @@ API_PORT = 8000
 API_DOCS_URL = "/docs"
 API_REDOC_URL = "/redoc"
 
+# OpenAI Settings
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")  # Set this in your environment variables
+OPENAI_TEMPERATURE = 0.8
+
 # Wake Word Settings
 WAKE_PHRASES = [
     "hey buddy",
