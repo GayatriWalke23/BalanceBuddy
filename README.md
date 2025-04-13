@@ -10,47 +10,78 @@ A smart voice-controlled assistant that helps you maintain a healthy lifestyle b
 
 ## Project Structure
 
-### Voice Assistant (`voice_assistant/`)
-- **wake_word/**: Voice activation system using Vosk
-  - `detector.py`: Audio input processing
-  - `processor.py`: Wake word detection logic
-  - `test_detector.py`: Testing utilities
-- **db/**: Database models and utilities
-- **api/**: FastAPI endpoints for web interface
-
-### Core Features (`src/`)
-- **test.py**: Daily plan generation using LangChain and OpenAI
+```
+BalanceBuddy/
+├── config.py                 # Central configuration
+├── requirements.txt          # Project dependencies
+├── src/                      # Web interface
+│   ├── main.py              # FastAPI web server
+│   ├── static/              # Static assets
+│   └── templates/           # HTML templates
+├── tests/                   # Test files
+│   └── test_microphone.py   # Audio input testing
+└── voice_assistant/         # Voice assistant module
+    ├── main.py             # Voice assistant entry point
+    ├── wake_word/          # Voice activation system
+    ├── db/                 # Database models
+    └── api/                # FastAPI endpoints
+```
 
 ## Requirements
 
 - Python 3.8+
 - OpenAI API key for plan generation
-- System dependencies for audio processing:
+- System dependencies:
   - PortAudio (for PyAudio)
   - CUDA-compatible GPU recommended for voice processing
 
 ## Setup
 
-1. Install dependencies:
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/BalanceBuddy.git
+cd BalanceBuddy
+```
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+```
+
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Set up environment variables:
+4. Set up environment variables:
 ```bash
 export OPENAI_API_KEY='your-api-key-here'
 ```
 
-3. Test wake word detection:
+## Running the Application
+
+1. Start the web interface:
 ```bash
-python voice_assistant/wake_word/test_detector.py
+python src/main.py
+```
+Visit http://localhost:8000 in your browser
+
+2. Start the voice assistant:
+```bash
+python voice_assistant/main.py
+```
+
+3. Test your microphone setup (optional):
+```bash
+python tests/test_microphone.py
 ```
 
 ## Development Status
 
 - ✅ Wake word detection system
 - ✅ Daily plan generation
-- 🚧 Web interface (in progress)
+- ✅ Web interface
 - 🚧 Notification system (in progress)
 - 📅 Mobile app (planned)
 
