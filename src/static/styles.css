@@ -8,111 +8,208 @@
 
 body, html {
     width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     font-size: 16px;
+    line-height: 1.6;
 }
 
 .container {
     width: 90%;
-    max-width: 600px;
+    max-width: 800px;
+    margin: 2rem auto;
     background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
 header {
     background: #2575fc;
     color: #ffffff;
-    padding: 20px;
+    padding: 2rem;
     text-align: center;
+    position: relative;
 }
 
 header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
 header p {
-    font-weight: lighter;
-    color: #dcdcdc;
+    margin-top: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.back-btn {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 main {
-    padding: 20px;
+    padding: 2rem;
+}
+
+.introduction {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .introduction h2 {
     color: #2e2e2e;
-    font-size: 18px;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .introduction p {
-    font-size: 16px;
     color: #666;
-    margin-top: 10px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .form-container {
-    margin: 20px;
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.form-container h2 {
-    color: #333;
-    margin-bottom: 15px;
-}
-
-.input-group {
-    margin-bottom: 20px;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    color: #666;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 500;
 }
 
-select {
+input, select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
 }
 
-button {
+input:focus, select:focus {
+    outline: none;
+    border-color: #2575fc;
+}
+
+input::placeholder {
+    color: #adb5bd;
+}
+
+.submit-btn {
     background: #2575fc;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 5px;
     width: 100%;
-    font-size: 16px;
+    transition: transform 0.2s, background 0.3s;
 }
 
-button:hover {
+.submit-btn:hover {
     background: #195bdb;
-    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Plan Display Styles */
+.plan-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.plan-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.preferences-summary {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.preferences-summary h3 {
+    color: #2575fc;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.preferences-summary ul {
+    list-style: none;
+}
+
+.preferences-summary li {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.preferences-summary strong {
+    color: #212529;
 }
 
 footer {
     background: #2575fc;
     color: #ffffff;
     text-align: center;
-    padding: 10px 20px;
-    width: 100%;
-    position: relative; /* Adjusted for demonstration purposes */
-    margin-top: 20px; /* Ensure spacing when the main content is short */
+    padding: 1rem;
+    margin-top: 2rem;
 }
 
 footer p {
     margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem auto;
+        width: 95%;
+    }
+
+    .plan-container {
+        grid-template-columns: 1fr;
+    }
+
+    main {
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 1rem;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
 }

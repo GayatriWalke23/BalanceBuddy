@@ -1,12 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Plan for {{ day }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ day }}'s Plan - BalanceBuddy</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Plan for {{ day }}</h1>
-    <div>
-        {{ plan | safe }}
+    <div class="container">
+        <header>
+            <h1>Your Plan for {{ day }}</h1>
+            <a href="/" class="back-btn">← Create New Plan</a>
+        </header>
+
+        <main>
+            <div class="plan-container">
+                <div class="plan-content">
+                    {{ plan | safe }}
+                </div>
+
+                <div class="preferences-summary">
+                    <h3>Your Preferences</h3>
+                    <ul>
+                        <li><strong>Age:</strong> {{ preferences.age }}</li>
+                        <li><strong>Gender:</strong> {{ preferences.gender }}</li>
+                        <li><strong>Weight:</strong> {{ preferences.weight }} kg</li>
+                        <li><strong>Height:</strong> {{ preferences.height }} m</li>
+                        <li><strong>Diet Type:</strong> {{ preferences.veg_or_nonveg }}</li>
+                        {% if preferences.disease %}
+                        <li><strong>Health Conditions:</strong> {{ preferences.disease }}</li>
+                        {% endif %}
+                        <li><strong>Region:</strong> {{ preferences.region }}</li>
+                        {% if preferences.allergics %}
+                        <li><strong>Allergies:</strong> {{ preferences.allergics }}</li>
+                        {% endif %}
+                        <li><strong>Food Preferences:</strong> {{ preferences.foodtype }}</li>
+                        <li><strong>Exercise:</strong> {{ preferences.exercise_pref }}</li>
+                        <li><strong>Diet Goals:</strong> {{ preferences.diet_pref }}</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 BalanceBuddy. All rights reserved.</p>
+        </footer>
     </div>
 </body>
 </html>

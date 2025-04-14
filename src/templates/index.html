@@ -12,38 +12,97 @@
             <h1>Welcome to BalanceBuddy</h1>
             <p>Your personal guide to balancing diet and workouts</p>
         </header>
+
         <main>
             <div class="introduction">
                 <h2>Why BalanceBuddy?</h2>
-                <p>BalanceBuddy is designed to help you create a personalized diet and workout plan that suits your lifestyle. By understanding your unique needs, we provide tailored recommendations that empower you to achieve your health and fitness goals.</p>
+                <p>BalanceBuddy creates personalized diet and workout plans tailored to your lifestyle, preferences, and health goals.</p>
             </div>
+
             <div class="form-container">
                 <h2>Get Your Personalized Plan</h2>
-                <form id="dayForm" action="/" method="get"> <!-- Action will be set by JavaScript -->
-                    <div class="input-group">
+                <form action="/plan" method="post">
+                    <div class="form-group">
                         <label for="day">Choose a Day:</label>
-                        <select name="day" id="day">
+                        <select name="day" id="day" required>
                             <option value="Monday">Monday</option>
                             <option value="Tuesday">Tuesday</option>
                             <option value="Wednesday">Wednesday</option>
                             <option value="Thursday">Thursday</option>
                             <option value="Friday">Friday</option>
                             <option value="Saturday">Saturday</option>
-                            <option value="Sunday">Sunday (Cheat Day)</option>
+                            <option value="Sunday">Sunday</option>
                         </select>
                     </div>
-                    <button type="submit">Get Recommendation</button>
+
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" name="age" required min="1" max="120">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender:</label>
+                        <select name="gender" id="gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg):</label>
+                        <input type="number" id="weight" name="weight" required step="0.1" min="20" max="300">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height (m):</label>
+                        <input type="number" id="height" name="height" required step="0.01" min="0.5" max="3">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="veg_or_nonveg">Dietary Type:</label>
+                        <select name="veg_or_nonveg" id="veg_or_nonveg" required>
+                            <option value="veg">Vegetarian</option>
+                            <option value="nonveg">Non-Vegetarian</option>
+                            <option value="vegan">Vegan</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="region">Region:</label>
+                        <input type="text" id="region" name="region" required placeholder="e.g., USA, India, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="disease">Health Conditions (if any):</label>
+                        <input type="text" id="disease" name="disease" placeholder="e.g., diabetes, hypertension, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="allergics">Food Allergies (if any):</label>
+                        <input type="text" id="allergics" name="allergics" placeholder="e.g., peanuts, dairy, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="foodtype">Preferred Food Types:</label>
+                        <input type="text" id="foodtype" name="foodtype" required placeholder="e.g., whole grains, low carb, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exercise_pref">Exercise Preferences:</label>
+                        <input type="text" id="exercise_pref" name="exercise_pref" required placeholder="e.g., yoga, cardio, weights, etc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diet_pref">Diet Preferences:</label>
+                        <input type="text" id="diet_pref" name="diet_pref" required placeholder="e.g., low sodium, high protein, etc.">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Generate Plan</button>
                 </form>
-                <script>
-                    document.getElementById('dayForm').onsubmit = function() {
-                        var day = document.getElementById('day').value;
-                        this.action = '/' + day;  // Set the action to include the selected day
-                    };
-                </script>
             </div>
-            
-            
         </main>
+
         <footer>
             <p>&copy; 2024 BalanceBuddy. All rights reserved.</p>
         </footer>
