@@ -12,7 +12,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from langchain_community.llms import OpenAI
+from langchain_openai import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from pydantic import BaseModel
@@ -24,7 +24,7 @@ app = FastAPI(title="BalanceBuddy Web Interface")
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent / "templates"))
 app.mount("/static", StaticFiles(directory=str(Path(__file__).resolve().parent / "static")), name="static")
 
-llm_resto = OpenAI(temperature=OPENAI_TEMPERATURE)
+llm_resto = OpenAI(temperature=OPENAI_TEMPERATURE, openai_api_key=OPENAI_API_KEY)
 
 class UserPreferences(BaseModel):
     age: int
