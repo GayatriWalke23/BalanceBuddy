@@ -2,6 +2,11 @@
 import os
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+env_path = Path(__file__).resolve().parent.parent / '.env'
+load_dotenv(env_path)
 
 # Add parent directory to Python path for imports
 parent_dir = str(Path(__file__).resolve().parent.parent)
@@ -46,27 +51,56 @@ def get_daily_plan(day: str, preferences: UserPreferences) -> str:
             'day', 'age', 'gender', 'weight', 'height', 'veg_or_nonveg',
             'disease', 'region', 'allergics', 'foodtype', 'exercise_pref', 'diet_pref'
         ],
-        template="""Please generate a detailed one-day plan for {day}. The plan should include meals and workouts formatted as follows:
-        - Morning Meal: [3 bullet points]
-        - Lunch: [3 bullet points]
-        - Afternoon Snack: [3 bullet points]
-        - Dinner: [3 bullet points]
-        - Workout: [3 bullet points]
-        Keep it short and do not add anything extra other than these points also limit each to 3 bullet points.
-        
-        Consider the following details for the plan:
-        - Age: {age}
-        - Gender: {gender}
-        - Weight: {weight}
-        - Height: {height}
-        - Dietary Preference: {veg_or_nonveg}
-        - Health Condition: {disease}
-        - Region: {region}
-        - Allergies: {allergics}
-        - Preferred Food Types: {foodtype}
-        - Exercise Preference: {exercise_pref}
-        - Diet Preference: {diet_pref}
-        """
+        template='''Generate a detailed one-day plan for {day}, considering these preferences:
+        Age: {age}, Gender: {gender}
+        Weight: {weight}kg, Height: {height}m
+        Diet: {veg_or_nonveg}
+        Health Conditions: {disease}
+        Region: {region}
+        Allergies: {allergics}
+        Food Types: {foodtype}
+        Exercise: {exercise_pref}
+        Diet Goals: {diet_pref}
+
+        Format the plan with HTML tags as follows:
+
+        <h2>Morning Meal</h2>
+        <ul>
+        <li>[Healthy breakfast option 1]</li>
+        <li>[Healthy breakfast option 2]</li>
+        <li>[Healthy breakfast option 3]</li>
+        </ul>
+
+        <h2>Lunch</h2>
+        <ul>
+        <li>[Nutritious lunch option 1]</li>
+        <li>[Nutritious lunch option 2]</li>
+        <li>[Nutritious lunch option 3]</li>
+        </ul>
+
+        <h2>Afternoon Snack</h2>
+        <ul>
+        <li>[Healthy snack option 1]</li>
+        <li>[Healthy snack option 2]</li>
+        <li>[Healthy snack option 3]</li>
+        </ul>
+
+        <h2>Dinner</h2>
+        <ul>
+        <li>[Balanced dinner option 1]</li>
+        <li>[Balanced dinner option 2]</li>
+        <li>[Balanced dinner option 3]</li>
+        </ul>
+
+        <h2>Workout Plan</h2>
+        <ul>
+        <li>[Exercise activity 1 with duration/intensity]</li>
+        <li>[Exercise activity 2 with duration/intensity]</li>
+        <li>[Exercise activity 3 with duration/intensity]</li>
+        </ul>
+
+        Make sure all recommendations are appropriate for the user's preferences, health conditions, and dietary restrictions.
+        Keep descriptions concise but informative, including portion sizes for meals and duration/intensity for exercises.''')"""
     )
     
     chain = LLMChain(llm=llm_resto, prompt=prompt_template)
