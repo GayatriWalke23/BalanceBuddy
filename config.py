@@ -17,7 +17,7 @@ API_DOCS_URL = "/docs"
 API_REDOC_URL = "/redoc"
 
 # OpenAI Settings
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")  # Set this in your environment variables
+GOOGLE_API_KEY = 'AIzaSyAeSwmnYTllWDDdFvQfp27hBrjo9plTnDE'
 OPENAI_TEMPERATURE = 0.8
 
 # Wake Word Settings
