@@ -29,7 +29,12 @@ app.mount("/static", StaticFiles(directory=str(Path(__file__).resolve().parent /
 
 # Configure Gemini
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel(model_name='gemini-pro', generation_config={
+    'temperature': 0.8,
+    'top_p': 1,
+    'top_k': 1,
+    'max_output_tokens': 2048,
+})
 
 class UserPreferences(BaseModel):
     age: int
