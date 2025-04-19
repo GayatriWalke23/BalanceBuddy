@@ -29,12 +29,12 @@ app.mount("/static", StaticFiles(directory=str(Path(__file__).resolve().parent /
 
 # Configure Gemini
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel(model_name='gemini-pro', generation_config={
-    'temperature': 0.8,
-    'top_p': 1,
-    'top_k': 1,
-    'max_output_tokens': 2048,
-})
+
+# Print available models
+for m in genai.list_models():
+    print(f"Found model: {m.name}")
+
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 class UserPreferences(BaseModel):
     age: int
@@ -51,61 +51,67 @@ class UserPreferences(BaseModel):
 
 def get_daily_plan(day: str, preferences: UserPreferences) -> str:
     """Generate a daily plan based on user preferences."""
-    prompt = f"""Generate a detailed one-day plan for {day}, considering these preferences:
-    Age: {preferences.age}, Gender: {preferences.gender}
-    Weight: {preferences.weight}kg, Height: {preferences.height}m
-    Diet: {preferences.veg_or_nonveg}
-    Health Conditions: {preferences.disease}
-    Region: {preferences.region}
-    Allergies: {preferences.allergics}
-    Food Types: {preferences.foodtype}
-    Exercise: {preferences.exercise_pref}
-    Diet Goals: {preferences.diet_pref}
+    try:
+        prompt = f"""Generate a detailed one-day plan for {day}, considering these preferences:
+        Age: {preferences.age}, Gender: {preferences.gender}
+        Weight: {preferences.weight}kg, Height: {preferences.height}m
+        Diet: {preferences.veg_or_nonveg}
+        Health Conditions: {preferences.disease}
+        Region: {preferences.region}
+        Allergies: {preferences.allergics}
+        Food Types: {preferences.foodtype}
+        Exercise: {preferences.exercise_pref}
+        Diet Goals: {preferences.diet_pref}
 
-    Format the plan with HTML tags as follows:
+        Format the plan with HTML tags as follows:
 
-    <h2>Morning Meal</h2>
-    <ul>
-    <li>[Healthy breakfast option 1]</li>
-    <li>[Healthy breakfast option 2]</li>
-    <li>[Healthy breakfast option 3]</li>
-    </ul>
+        <h2>Morning Meal</h2>
+        <ul>
+        <li>[Healthy breakfast option 1]</li>
+        <li>[Healthy breakfast option 2]</li>
+        <li>[Healthy breakfast option 3]</li>
+        </ul>
 
-    <h2>Lunch</h2>
-    <ul>
-    <li>[Nutritious lunch option 1]</li>
-    <li>[Nutritious lunch option 2]</li>
-    <li>[Nutritious lunch option 3]</li>
-    </ul>
+        <h2>Lunch</h2>
+        <ul>
+        <li>[Nutritious lunch option 1]</li>
+        <li>[Nutritious lunch option 2]</li>
+        <li>[Nutritious lunch option 3]</li>
+        </ul>
 
-    <h2>Afternoon Snack</h2>
-    <ul>
-    <li>[Healthy snack option 1]</li>
-    <li>[Healthy snack option 2]</li>
-    <li>[Healthy snack option 3]</li>
-    </ul>
+        <h2>Afternoon Snack</h2>
+        <ul>
+        <li>[Healthy snack option 1]</li>
+        <li>[Healthy snack option 2]</li>
+        <li>[Healthy snack option 3]</li>
+        </ul>
 
-    <h2>Dinner</h2>
-    <ul>
-    <li>[Balanced dinner option 1]</li>
-    <li>[Balanced dinner option 2]</li>
-    <li>[Balanced dinner option 3]</li>
-    </ul>
+        <h2>Dinner</h2>
+        <ul>
+        <li>[Balanced dinner option 1]</li>
+        <li>[Balanced dinner option 2]</li>
+        <li>[Balanced dinner option 3]</li>
+        </ul>
 
-    <h2>Workout Plan</h2>
-    <ul>
-    <li>[Exercise activity 1 with duration/intensity]</li>
-    <li>[Exercise activity 2 with duration/intensity]</li>
-    <li>[Exercise activity 3 with duration/intensity]</li>
-    </ul>
+        <h2>Workout Plan</h2>
+        <ul>
+        <li>[Exercise activity 1 with duration/intensity]</li>
+        <li>[Exercise activity 2 with duration/intensity]</li>
+        <li>[Exercise activity 3 with duration/intensity]</li>
+        </ul>
 
-    Make sure all recommendations are appropriate for the user's preferences, health conditions, and dietary restrictions.
-    Keep descriptions concise but informative, including portion sizes for meals and duration/intensity for exercises."""
-    
-    response = model.generate_content(prompt)
-    result = response.text
-    
-    return result
+        Make sure all recommendations are appropriate for the user's preferences, health conditions, and dietary restrictions.
+        Keep descriptions concise but informative, including portion sizes for meals and duration/intensity for exercises."""
+
+        print(f"Sending prompt to Gemini: {prompt[:100]}...")
+        response = model.generate_content(prompt)
+        print(f"Received response from Gemini: {response}")
+        result = response.text
+        print(f"Extracted text: {result[:100]}...")
+        return result
+    except Exception as e:
+        print(f"Error with Gemini: {str(e)}")
+        return f"Error generating plan: {str(e)}"
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
